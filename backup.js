@@ -1,5 +1,6 @@
 import { spawn } from "child_process";
 import moment from "moment";
+import { scheduleTask } from "./schedule.js";
 
 const dbName = "agendaDB";
 const compressionType = "--gzip";
@@ -31,6 +32,11 @@ const backupDatabase = async () => {
   });
 };
 
-// Initiate the database backup
-backupDatabase();
-
+// Schedule the backup task using Agenda
+scheduleTask("backup MongoDB", "1 minute", backupDatabase)
+  .then(() => {
+    console.log("Backup task scheduled successfully");
+  })
+  .catch((error) => {
+    console.error(`Error scheduling backup task: ${error.message}`);
+  });
